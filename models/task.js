@@ -9,8 +9,14 @@ const taskSchema = new mongoose.Schema({
         type: String
     },
     status: {
-        type: String
+        type: String,
+        enum: ["completed", 'pending', 'canceled'],
+    },
+    // need to add users ref
+    user: {
+        type: mongoose.Types.ObjectId,
+        ref: "User"
     }
-})
+}, {timestamps: true})
 
 module.exports=mongoose.model('Tasks',taskSchema)

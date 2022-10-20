@@ -2,13 +2,22 @@ const Task = require('../models/task')
 const Users = require('../models/user')
 const res = require('express/lib/response')
 const { json } = require('body-parser')
+
+
+/**
+ * @hint need to use async and await for these functions
+ */
+
 var functions = {
     adduser: function (req, res) {
+        const {name, salary} = req.body;
         var newuser = Users({
-            name: req.body.name,
-            salary: req.body.salary,
+            name,
+            salary,
             //  tasks: [20,30,80],
         })
+
+        Users.findOneAndUpdate({_id: "asd"}, {name: "aaa"}, {upsert: true})
         newuser.save(function (err, newuser) {
             if (err) {
                 console.log(err)
@@ -27,30 +36,36 @@ var functions = {
         var cancelled = []
         var completed = []
         var pending = []
-        Users.findOne({ _id: req.params._id }, (error, data) => {
-            if (error) throw error;
-            console.log(data.tasks)
-            Task.find((err, result) => {
-                if (error) {
-                    return res.json({ success: false })
-                } else {
-                    result.forEach((element) => {
-                        data.tasks.forEach((task) => {
-                            if (element._id == task) {
-                                if (element.status == 'cancelled') {
-                                    cancelled.push(JSON.stringify({ _id: element._id, title: element.title, description: element.description, status: element.status }))
-                                } else if (element.status == 'completed') {
-                                    completed.push(JSON.stringify({ _id: element._id, title: element.title, description: element.description, status: element.status }))
-                                } else if (element.status == 'pending') {
-                                    pending.push(JSON.stringify({ _id: element._id, title: element.title, description: element.description, status: element.status }))
-                                }
-                            }
-                        })
-                    })
-                    return res.json({ name: data.name, salary: data.salary, tasks: [{ status: 'cancelled', tasks: cancelled }, { status: 'completed', tasks: completed }, { status: 'pending', tasks: pending }] })
-                }
-            })
-        })
+
+        /**
+         * @hint need to start using aggregate for this case
+         */
+        Users.aggregate([])
+
+        // Users.findOne({}, (error, data) => {
+        //     if (error) throw error;
+        //     console.log(data.tasks)
+        //     Task.find((err, result) => {
+        //         if (error) {
+        //             return res.json({ success: false })
+        //         } else {
+        //             result.forEach((element) => {
+        //                 data.tasks.forEach((task) => {
+        //                     if (element._id == task) {
+        //                         if (element.status == 'cancelled') {
+        //                             cancelled.push(JSON.stringify({ _id: element._id, title: element.title, description: element.description, status: element.status }))
+        //                         } else if (element.status == 'completed') {
+        //                             completed.push(JSON.stringify({ _id: element._id, title: element.title, description: element.description, status: element.status }))
+        //                         } else if (element.status == 'pending') {
+        //                             pending.push(JSON.stringify({ _id: element._id, title: element.title, description: element.description, status: element.status }))
+        //                         }
+        //                     }
+        //                 })
+        //             })
+        //             return res.json({ name: data.name, salary: data.salary, tasks: [{ status: 'cancelled', tasks: cancelled }, { status: 'completed', tasks: completed }, { status: 'pending', tasks: pending }] })
+        //         }
+        //     })
+        // })
     },
 
     deleteUser: function (req, res) {

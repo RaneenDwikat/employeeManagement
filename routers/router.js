@@ -4,6 +4,9 @@ const actions = require('../methods/actions')
 
 
 
+/**
+ * @hint need to split users and tasks routes to separates files
+ */
 //add new user
 router.post('/adduser', actions.adduser )
 //get all users
