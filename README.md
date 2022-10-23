@@ -7,6 +7,6 @@ Done: need verify token middleware for user and task endpoints [addUser, deleteU
 
 Done: need endpoint admin login {email, password}
 
-*** request body, params validation using yup
+Done: request body, params validation using yup
 
-*** build middleware for validations
+Done: build middleware for validations
