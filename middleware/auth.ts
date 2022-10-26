@@ -18,7 +18,7 @@ interface JwtPayload {
             req.body=user
             next()
             }
-            return res.status(401).json({error:"something went error"})
+            return res.status(401).json({error:"Not Authenticated!"})
           }
       }
      

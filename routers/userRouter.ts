@@ -2,7 +2,7 @@ import express from 'express'
 export const userRouter = express.Router()
 import usersController from '../controller/userController'
 import auth from '../middleware/auth'
-
+import {getFromCache} from '../cache/users'
 
 const controller=new usersController();
 
@@ -13,4 +13,4 @@ userRouter.put('/update/:_id',controller.updateUser)
 // router.delete('/delete/:_id', verifyToken, actions.deleteUser)
 userRouter.delete('/delete/:_id', auth,controller.deleteUser)
 //get users
-userRouter.get('/get',controller.getUsers)
+userRouter.get('/get',getFromCache,controller.getUsers)

@@ -1,5 +1,6 @@
 import tasks from '../model/task'
 import  { NextFunction, Request,Response } from 'express';
+import { redis } from '../utils/redis/connectRedis';
 
 export default class tasksController{
      
@@ -38,5 +39,14 @@ export default class tasksController{
       return res.status(500).json({ success: false, msg: error });
     }
   };
-  
+  getTask = async function (req:Request, res:Response) {
+    const { _id } = req.params;
+    try {
+      const data=await tasks.findOne({ _id });
+      redis.setEx(`task_?${_id}`,3600,JSON.stringify(data))
+      return res.status(200).json({ success: true, msg: data });
+    } catch (error) {
+      return res.status(500).json({ success: false, msg: error });
+    }
+  };
 }

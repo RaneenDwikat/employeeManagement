@@ -6,11 +6,10 @@ import config from './config/config.config'
 import {userRouter} from './routers/userRouter'
 import {taskRouter} from './routers/taskRouter'
 import {adminRouter} from './routers/adminRouter'
-// import urlsUsers from './routers/userRouter'
-// const urlsTasks = require("./routers/taskRouter")
-// const urlsAdmins = require("./routers/adminRouter")
-connectDB()
+import { connectRedis } from './utils/redis/connectRedis'
 
+connectDB()
+connectRedis()
 const app=express()
 
 if(process.env.NODE_ENV==="development"){

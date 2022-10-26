@@ -1,7 +1,7 @@
 import {Request,Response,NextFunction} from 'express'
+import Yup from 'yup'
 
-
-export const checkValidation= (schema:any)=>{
+export const checkValidation= (schema:Yup.AnySchema)=>{
     return async (req:Request,res:Response,next:NextFunction)=>{
         try {
             const validation=await schema.validate(req.body)
