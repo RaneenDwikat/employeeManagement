@@ -2,6 +2,7 @@ import users from '../model/user';
 import tasks from '../model/task'
 import  { NextFunction, Request,Response } from 'express';
 import {redis} from '../utils/redis/connectRedis'
+import { getAndSetCache } from '../middleware/cache';
 
 
 
@@ -50,7 +51,10 @@ export default class usersController{
       async getUsers (req:Request, res:Response, next:NextFunction) {
         try {
           
-
+          const cacheData = await getAndSetCache(req, res, next, `users`, null, null)
+          if (cacheData) {
+            return res.status(200).json({ success: true, msg: cacheData });
+          } else {
           const data = await users.aggregate([
             {
               $lookup: {
@@ -86,9 +90,11 @@ export default class usersController{
               },
             },
           ]).project({ __v: 0 });
-          redis.setEx("users", 3600,JSON.stringify(data))
-          return res.status(200).send({ data: data });
-        } catch (error) {}
+          if(data){
+            await getAndSetCache(req, res, next, `users`, JSON.stringify(data), 3600)
+            return res.status(200).send({ data: data });
+          }
+       } } catch (error) {}
       };
       
 }

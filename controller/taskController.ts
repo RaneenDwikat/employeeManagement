@@ -1,10 +1,11 @@
 import tasks from '../model/task'
-import  { NextFunction, Request,Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { redis } from '../utils/redis/connectRedis';
+import { getAndSetCache } from '../middleware/cache'
 
-export default class tasksController{
-     
- updateTask = async (req:Request, res:Response, next:NextFunction) => {
+export default class tasksController {
+
+  updateTask = async (req: Request, res: Response, next: NextFunction) => {
     const { _id } = req.params;
     const { title, description, status, owner } = req.body;
 
@@ -19,18 +20,18 @@ export default class tasksController{
       return res.json({ success: false, error: error });
     }
   };
-  
-   addTask = async (req:Request, res:Response, next:NextFunction) => {
+
+  addTask = async (req: Request, res: Response, next: NextFunction) => {
     const { title, description, status, owner } = req.body;
     try {
-      await new tasks ({ title, description, status, owner }).save();
+      await new tasks({ title, description, status, owner }).save();
       return res.status(201).json({ success: true, msg: "added" });
     } catch (error) {
       return res.status(500).json({ success: false, msg: error });
     }
   };
-  
-   removeTask = async function (req:Request, res:Response) {
+
+  removeTask = async function (req: Request, res: Response) {
     const { _id } = req.params;
     try {
       await tasks.findByIdAndDelete({ _id });
@@ -39,14 +40,23 @@ export default class tasksController{
       return res.status(500).json({ success: false, msg: error });
     }
   };
-  getTask = async function (req:Request, res:Response) {
+  getTask = async function (req: Request, res: Response, next: NextFunction) {
     const { _id } = req.params;
     try {
-      const data=await tasks.findOne({ _id });
-      redis.setEx(`task_?${_id}`,3600,JSON.stringify(data))
-      return res.status(200).json({ success: true, msg: data });
+      const cacheData = await getAndSetCache(req, res, next, `task_${_id}`, null, null)
+      if (cacheData) {
+        return res.status(200).json({ success: true, msg: cacheData });
+      } else {
+        const data = await tasks.findOne({ _id });
+        if (data) {
+          await getAndSetCache(req, res, next, `task_${_id}`, JSON.stringify(data), 3600)
+        }
+        // console.log(JSON.parse({data:data}))
+        return res.status(200).json({ success: true, msg: data });
+      }
+
     } catch (error) {
-      return res.status(500).json({ success: false, msg: error });
+      return res;
     }
   };
 }
