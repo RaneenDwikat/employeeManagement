@@ -7,7 +7,6 @@ import {userRouter} from './routers/userRouter'
 import {taskRouter} from './routers/taskRouter'
 import {adminRouter} from './routers/adminRouter'
 import { connectRedis } from './utils/redis/connectRedis'
-import {limiter} from './middleware/rateLimitter'
 
 connectDB()
 connectRedis()
@@ -15,7 +14,6 @@ const app=express()
 if(process.env.NODE_ENV==="development"){
     app.use(morgan("dev"))
 }
-app.use(limiter)
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
