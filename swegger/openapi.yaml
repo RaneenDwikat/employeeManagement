@@ -1,0 +1,263 @@
+openapi: 3.0.3
+info:
+  title: Swagger Test
+  contact:
+    email: raneendwikat16@gmail.com
+  license:
+    name: MIT
+    url: http://www.opensource.org/license/MIT
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://localhost:3000/
+paths:
+  
+  /api/v1/user/add:
+    post:
+      tags:
+        - Users
+      summary: Create user
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+  /api/v1/user/update/{_id}:
+    put:
+      tags:
+        - Users
+      summary: Update user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: _id
+          in: path
+          description: id that need to be deleted
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: successful operation
+  /api/v1/user/delete/{_id}:
+    delete:
+      tags:
+        - Users
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: _id
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+  /api/v1/task/add:
+    post:
+      tags:
+        - Tasks
+      summary: Create task
+      operationId: createTask
+      requestBody:
+        description: Created task object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Task'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Task'
+  /api/v1/task/update/{_id}:
+    put:
+      tags:
+        - Tasks
+      summary: Update task
+      description: This can only be done by the logged in user.
+      operationId: updateTask
+      parameters:
+        - name: _id
+          in: path
+          description: id that need to be deleted
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent Task 
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Task'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        default:
+          description: successful operation
+  /api/v1/task/delete/{_id}:
+    delete:
+      tags:
+        - Tasks
+      summary: Delete task
+      description: This can only be done by the logged in user.
+      operationId: deleteTask
+      parameters:
+        - name: _id
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found        
+  /api/v1/admin/login:
+    post:
+      tags:
+        - Admins
+      summary: login admin
+      operationId: loginAdmin
+      requestBody:
+        description: login admin
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Admin'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Admin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Admin'
+      responses:
+        default:
+          description: Authanticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Admin'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Admin'
+          
+components:
+  schemas:
+    Admin:
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+          example: 63543c168d39fb31ddbc3a60
+        email:
+          type: string
+          format: email
+          example: raneen@gmail.com
+        password:
+          type: string
+          description: admin password
+          format: password
+          example: 123012301230
+      xml:
+        name: admin
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+          example: 63543c168d39fb31ddbc3a60
+        name:
+          type: string
+          example: Mike
+        salary:
+          type: integer
+          description: User salary
+          format: int32
+          example: 1500
+      xml:
+        name: user
+    Task:
+      required:
+        - title
+        - owner
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+          example: 63543c168d39fb31ddbc3a60
+        title:
+          type: string
+          example: 1st task
+        description:
+          type: string
+          example: 1st task description
+        owner:
+          $ref: '#/components/schemas/User'
+        status:
+          type: string
+          description: task status 
+          enum:
+            - completed
+            - pending
+            - cancelled
+      xml:
+        name: task
+
+

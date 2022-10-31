@@ -7,7 +7,10 @@ import {userRouter} from './routers/userRouter'
 import {taskRouter} from './routers/taskRouter'
 import {adminRouter} from './routers/adminRouter'
 import { connectRedis } from './utils/redis/connectRedis'
+import sweggerUI from 'swagger-ui-express'
+import YAML from 'yamljs'
 
+const sweggerDoc= YAML.load('./swegger/openapi.yaml')
 connectDB()
 connectRedis()
 const app=express()
@@ -16,11 +19,11 @@ if(process.env.NODE_ENV==="development"){
 }
 app.use(cors())
 app.use(express.json())
+app.use('/swegger',sweggerUI.serve,sweggerUI.setup(sweggerDoc))
 app.use(express.urlencoded({extended:false}))
 app.use("/api/v1/user/", userRouter);
 app.use("/api/v1/task/", taskRouter);
 app.use("/api/v1/admin/", adminRouter);
-
 const port= config.port
 
 app.listen(port,():void=>{

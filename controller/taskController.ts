@@ -2,6 +2,7 @@ import tasks from '../model/task'
 import { NextFunction, Request, Response } from 'express';
 import { redis } from '../utils/redis/connectRedis';
 import { getAndSetCache } from '../middleware/cache'
+import task from '../model/task';
 
 export default class tasksController {
 
@@ -43,18 +44,9 @@ export default class tasksController {
   getTask = async function (req: Request, res: Response, next: NextFunction) {
     const { _id } = req.params;
     try {
-      const cacheData = await getAndSetCache(req, res, next, `task_${_id}`, null, null)
-      if (cacheData) {
-        return res.status(200).json({ success: true, msg: cacheData });
-      } else {
-        const data = await tasks.findOne({ _id });
-        if (data) {
-          await getAndSetCache(req, res, next, `task_${_id}`, JSON.stringify(data), 3600)
-        }
-        // console.log(JSON.parse({data:data}))
-        return res.status(200).json({ success: true, msg: data });
-      }
-
+      const find =await task.findOne({_id})
+     const data=await getAndSetCache(`task_${_id}`,()=>find,30)
+     return res.status(200).json(data)
     } catch (error) {
       return res;
     }

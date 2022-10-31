@@ -1,20 +1,29 @@
-import  { NextFunction, Request,Response } from 'express';
-import {redis} from '../utils/redis/connectRedis'
+import { NextFunction, Request, Response } from "express";
+import { redis } from "../utils/redis/connectRedis";
 
-export const getAndSetCache = async(req:Request,res:Response,next:NextFunction,key:string,value:string|null,expire:number|null)=>{
 
+export const getAndSetCache = async (
+    key: string,
+    cb: (e?: any) => any,
+    expired?: number
+  ) => {
     try {
-        if(value==null || expire==null){
-            const user=await redis.GET(key)
-            if(user){
-                return res.status(200).json(JSON.parse(user))
-            } 
-        }else{
-            const user=await redis.setEx(key,expire,value) 
-            next()
-        }
-       
+      if (key) {
+        const data = await redis.GET(key);
+        return data;
+      } else {
+       if(expired){
+
+        Promise.all([cb(), true])
+        .then(async (result) => {
+          const cb_data= result[0];
+          await redis.setEx(key, expired, cb_data);
+          return cb_data;
+        })
+        .catch((err) => console.error(err));
+       }
+      }
     } catch (error) {
-        return error
+      return error;
     }
-}
+  };

@@ -50,11 +50,6 @@ export default class usersController{
       
       async getUsers (req:Request, res:Response, next:NextFunction) {
         try {
-          
-          const cacheData = await getAndSetCache(req, res, next, `users`, null, null)
-          if (cacheData) {
-            return res.status(200).json({ success: true, msg: cacheData });
-          } else {
           const data = await users.aggregate([
             {
               $lookup: {
@@ -90,11 +85,9 @@ export default class usersController{
               },
             },
           ]).project({ __v: 0 });
-          if(data){
-            await getAndSetCache(req, res, next, `users`, JSON.stringify(data), 3600)
-            return res.status(200).send({ data: data });
-          }
-       } } catch (error) {}
+          const cache=await getAndSetCache(`users`,()=>data,30)
+          return res.status(200).json(data)
+        } catch (error) {}
       };
       
 }
