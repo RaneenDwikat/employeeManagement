@@ -17,12 +17,16 @@ import {redis} from '../utils/redis/connectRedis'
 import { NextFunction,Request,Response } from 'express'
 
 
- export const  limiter=async(req:Request,res:Response,next:NextFunction)=>{
+ export const  limiter=async(timestamp:number,limit:number)=>
+  async (req:Request,res:Response,next:NextFunction ) =>
+    
+ 
+ {
             const requests= await redis.incr(req.ip)
             if(requests ===1){
-                await redis.expire(req.ip,60)
+                await redis.expire(req.ip,timestamp)
             }
-            if(requests>5){
+            if(requests>limit){
                 return res.status(501).json({msg:"You can't make any more requests at the moment. Try again later"})
             }else{
                 next()

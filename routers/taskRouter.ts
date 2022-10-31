@@ -10,8 +10,8 @@ const controller=new taskController();
 
 
 // add a new task
-taskRouter.post('/task',limiter,auth,controller.addTask)
+taskRouter.post('/task',async()=>await  limiter(60,10),auth,controller.addTask)
 // update task 
-taskRouter.put('/task/:_id',limiter,controller.updateTask)
+taskRouter.put('/task/:_id',async()=>await  limiter(60,10),controller.updateTask)
 //get task
-taskRouter.get("/get/:_id",limiter,controller.getTask)
+taskRouter.get("/get/:_id",async()=>await  limiter(60,10),controller.getTask)

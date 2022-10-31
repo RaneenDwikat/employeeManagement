@@ -8,7 +8,7 @@ import {adminSchemaValidation} from '../validation/admin'
 
 const controller=new adminsController();
 
-adminRouter.post('/login',limiter,checkValidation(adminSchemaValidation), controller.login)
+adminRouter.post('/login',async()=>await  limiter(60,10),checkValidation(adminSchemaValidation), controller.login)
 
 
 

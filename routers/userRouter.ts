@@ -6,11 +6,11 @@ import {limiter} from '../middleware/rateLimitter'
 
 const controller=new usersController();
 
-userRouter.post('/add',auth,limiter, controller.addUser)
+userRouter.post('/add',auth, async()=>await  limiter(60,10), controller.addUser)
 //update user
-userRouter.put('/update/:_id',limiter,controller.updateUser)
+userRouter.put('/update/:_id',async()=>await  limiter(60,10),controller.updateUser)
 //delete user
 // router.delete('/delete/:_id', verifyToken, actions.deleteUser)
-userRouter.delete('/delete/:_id', limiter,auth,controller.deleteUser)
+userRouter.delete('/delete/:_id', async()=>await  limiter(60,10),auth,controller.deleteUser)
 //get users
-userRouter.get('/get',limiter,controller.getUsers)
+userRouter.get('/get',async()=>await  limiter(60,10),controller.getUsers)
