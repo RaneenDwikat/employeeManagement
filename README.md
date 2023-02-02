@@ -12,18 +12,8 @@ Employee Management App.
  - Save task for user
  - Edit task for user
  - Delete task for user
- - get users data with the tasks, tasks should be grouped by status of task. 
- EX:
- ex:endpoints:
- 	a- Save user to the DB
- 	b- Update user data
- 	c- Delete user
-           d- Save task for user
-           e- Edit task for user
-           f- Delete task for user
- 	g- get users data with the tasks, tasks should be grouped by status of task
- 
-ex: [
+ - get users data with the tasks, tasks should be grouped by status of task. <br>
+ EX:[
   {
     _id: "7827187hd87h187dada",
     name: "Mohammad Ahmad",
@@ -71,7 +61,7 @@ ex: [
 
 ### Languages & Frameworks
 
-Back-end : Node js 
+Back-end : Node js <br>
 Database : MongoDB
 
 
